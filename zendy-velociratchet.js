@@ -81,61 +81,6 @@ Velociratchet.helpers = {
 };
 
 // Spacebar helpers
-if( Meteor.isClient ) {
-
-    UI.registerHelper('getPreviousPage', function () {
-        return Velociratchet.history[Velociratchet.history.length-1];
-    });
-    UI.registerHelper('isActive', function (args) {
-        return args.hash.menu === args.hash.active ? 'active' : '';
-    });
-    UI.registerHelper('getCurrentRoute', function () {
-        return Router.current().route.getName();
-    });
-    // XXX: make this a plugin itself?
-    var sideToSide = function(fromX, toX) {
-        return function(options) {
-            options = _.extend({
-                duration: 500,
-                easing: 'ease-in-out'
-            }, options);
-
-            return {
-                insertElement: function(node, next, done) {
-                    var $node = $(node);
-
-                    $node
-                        .css('transform', 'translateX(' + fromX + ')')
-                        .insertBefore(next)
-                        .velocity({
-                            translateX: [0, fromX]
-                        }, {
-                            easing: options.easing,
-                            duration: options.duration,
-                            queue: false,
-                            complete: function() {
-                                $node.css('transform', '');
-                                done();
-                            }
-                        });
-                },
-                removeElement: function(node, done) {
-                    var $node = $(node);
-
-                    $node
-                        .velocity({
-                            translateX: [toX]
-                        }, {
-                            duration: options.duration,
-                            easing: options.easing,
-                            complete: function() {
-                                $node.remove();
-                                done();
-                            }
-                        });
-                }
-            }
-        }
 UI.registerHelper('canGoBack', function () {
     return Velociratchet.history.get().length > 0 || this.backRoute;
 });
@@ -146,22 +91,73 @@ UI.registerHelper('getPreviousPage', function () {
     } else {
         return this.backRoute;
     }
-    Momentum.registerPlugin('vratchet-right-to-left', sideToSide('100%', '-100%'));
-    Momentum.registerPlugin('vratchet-left-to-right', sideToSide('-100%', '100%'));
-    Momentum.registerPlugin('vratchet-fade', function(options) {
-        Velociratchet.clearHistory();
+});
+UI.registerHelper('isActive', function (args) {
+    return args.hash.menu === args.hash.active ? 'active' : '';
+});
+UI.registerHelper('getCurrentRoute', function () {
+    return Router.current().route.getName();
+});
+// XXX: make this a plugin itself?
+var sideToSide = function(fromX, toX) {
+    return function(options) {
+        options = _.extend({
+            duration: 500,
+            easing: 'ease-in-out'
+        }, options);
+
         return {
-            insertElement: function(node, next) {
-                $(node)
-                    .hide()
+            insertElement: function(node, next, done) {
+                var $node = $(node);
+
+                $node
+                    .css('transform', 'translateX(' + fromX + ')')
                     .insertBefore(next)
-                    .velocity('fadeIn');
+                    .velocity({
+                        translateX: [0, fromX]
+                    }, {
+                        easing: options.easing,
+                        duration: options.duration,
+                        queue: false,
+                        complete: function() {
+                            $node.css('transform', '');
+                            done();
+                        }
+                    });
             },
-            removeElement: function(node) {
-                $(node).velocity('fadeOut', function() {
-                    $(this).remove();
-                });
+            removeElement: function(node, done) {
+                var $node = $(node);
+
+                $node
+                    .velocity({
+                        translateX: [toX]
+                    }, {
+                        duration: options.duration,
+                        easing: options.easing,
+                        complete: function() {
+                            $node.remove();
+                            done();
+                        }
+                    });
             }
         }
-    });
+    }
 }
+Momentum.registerPlugin('vratchet-right-to-left', sideToSide('100%', '-100%'));
+Momentum.registerPlugin('vratchet-left-to-right', sideToSide('-100%', '100%'));
+Momentum.registerPlugin('vratchet-fade', function(options) {
+    Velociratchet.clearHistory();
+    return {
+        insertElement: function(node, next) {
+            $(node)
+                .hide()
+                .insertBefore(next)
+                .velocity('fadeIn');
+        },
+        removeElement: function(node) {
+            $(node).velocity('fadeOut', function() {
+                $(this).remove();
+            });
+        }
+    }
+});
