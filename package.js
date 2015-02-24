@@ -8,7 +8,7 @@ Package.describe({
 Package.onUse(function(api) {
     api.versionsFrom('1.0.2.1');
     api.use(['iron:router@1.0.7','percolate:momentum-iron-router@0.7.0', 'percolate:momentum@0.7.2', 'spacebars', 'templating'], 'client');
-    api.addFiles('zendy-velociratchet.js');
+    api.addFiles('zendy-velociratchet.js', 'client');
     api.addFiles('css/ratchet.css','client');
     api.addFiles('fonts/ratchicons.eot','client');
     api.addFiles('fonts/ratchicons.svg','client');
