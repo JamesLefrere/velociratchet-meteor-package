@@ -14,7 +14,7 @@ Package.onUse(function(api) {
     api.addFiles('fonts/ratchicons.svg','client');
     api.addFiles('fonts/ratchicons.ttf','client');
     api.addFiles('fonts/ratchicons.woff','client');
-    api.export('Velociratchet')
+    api.export('Velociratchet', 'client')
 });
 
 Package.onTest(function(api) {
