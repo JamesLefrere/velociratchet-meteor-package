@@ -67,6 +67,16 @@ Velociratchet.helpers = {
         return function (from, to, element) {
             return Velociratchet.transition || 'vratchet-fade';
         }
+    },
+    route: function () {
+        options = {};
+        currentRoute = Router.current();
+        if (typeof currentRoute.router.options.vratchet !== "object")
+            return false;
+        vratchet = (currentRoute.router.options.vratchet) ? currentRoute.router.options.vratchet : {};
+        controller = (currentRoute.route.options.controller && typeof currentRoute.route.options.controller.vratchet === "object") ? currentRoute.route.options.controller.vratchet : {};
+        route = (typeof currentRoute.route.options.vratchet === "object") ? currentRoute.route.options.vratchet : {};
+        return _.extend(options, vratchet, route);
     }
 };
 
