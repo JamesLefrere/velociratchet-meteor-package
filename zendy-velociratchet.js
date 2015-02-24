@@ -129,6 +129,12 @@ if( Meteor.isClient ) {
 UI.registerHelper('canGoBack', function () {
     return Velociratchet.history.get().length > 0 || this.backRoute;
 });
+UI.registerHelper('getPreviousPage', function () {
+    history = Velociratchet.history.get();
+    if (history.length) {
+        return history[history.length-1];
+    } else {
+        return this.backRoute;
     }
     Momentum.registerPlugin('vratchet-right-to-left', sideToSide('100%', '-100%'));
     Momentum.registerPlugin('vratchet-left-to-right', sideToSide('-100%', '100%'));
