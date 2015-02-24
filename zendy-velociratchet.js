@@ -1,16 +1,20 @@
 // Namespace for package
 Velociratchet = {};
 
-Velociratchet.history = [];
+Velociratchet.history = new ReactiveVar( [] );
 
 Velociratchet.addToHistory = function( routeName ){
-    Velociratchet.history.push( routeName );
+    history = Velociratchet.history.get();
+    history.push( routeName )
+    Velociratchet.history.set( history );
 }
 Velociratchet.removeFromHistory = function(){
-    Velociratchet.history.pop();
+    history = Velociratchet.history.get();
+    history.pop();
+    Velociratchet.history.set( history );
 }
 Velociratchet.clearHistory = function() {
-    Velociratchet.history = [];
+    Velociratchet.history.set( [] );
 }
 
 // Events for layout template
